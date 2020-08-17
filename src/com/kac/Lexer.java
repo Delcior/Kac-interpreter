@@ -74,13 +74,14 @@ public class Lexer {
         //pozniej czy jest np == lub <=
         if(singleCharacterTokens.containsKey(currentCharacter))
             addToken(singleCharacterTokens.get(currentCharacter));
-
+        
     }
 
     private void addToken(TokenType tokenType){
         String text = source.substring(start, currentCharacterPosition);
         tokens.add(new Token(tokenType, text, null, lineCounter));
     }
+
     private char getCurrentChar(){
         return source.charAt(currentCharacterPosition++);
     }
