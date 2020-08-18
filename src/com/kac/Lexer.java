@@ -72,16 +72,29 @@ public class Lexer {
         char currentCharacter = getCurrentChar();
         //sprawdz czy jest single char
         //pozniej czy jest np == lub <=
-        if(singleCharacterTokens.containsKey(currentCharacter))
+        if(singleCharacterTokens.containsKey(currentCharacter)) {
             addToken(singleCharacterTokens.get(currentCharacter));
-        
+            return;
+        }
+        switch(currentCharacter){
+            case '!': addToken(match(currentCharacter) ? TokenType.EXCL_MARK_EQUAL : TokenType.EXCL_MARK);
+        }
     }
 
     private void addToken(TokenType tokenType){
-        String text = source.substring(start, currentCharacterPosition);
-        tokens.add(new Token(tokenType, text, null, lineCounter));
+        addToken(tokenType, null);
     }
 
+    private void addToken(TokenType tokenType, Object literal){
+        String text = source.substring(start, currentCharacterPosition);
+        tokens.add(new Token(tokenType, text, literal, lineCounter));
+    }
+
+    private boolean match(char character){
+        if(isFinishedScanning())
+            return false;
+        return source.charAt(currentCharacterPosition) == character;
+    }
     private char getCurrentChar(){
         return source.charAt(currentCharacterPosition++);
     }
