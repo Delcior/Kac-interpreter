@@ -70,6 +70,11 @@ public class Lexer {
     }
     private void scanToken(){
         char currentCharacter = getCurrentChar();
+
+        if(currentCharacter == '\n'){
+            lineCounter++;
+            return;
+        }
         //sprawdz czy jest single char
         //pozniej czy jest np == lub <=
         if(singleCharacterTokens.containsKey(currentCharacter)) {
@@ -77,7 +82,22 @@ public class Lexer {
             return;
         }
         switch(currentCharacter){
-            case '!': addToken(match(currentCharacter) ? TokenType.EXCL_MARK_EQUAL : TokenType.EXCL_MARK);
+            case '!': addToken(match('=') ? TokenType.EXCL_MARK_EQUAL : TokenType.EXCL_MARK);break;
+            case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);break;
+            case '<': addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);break;
+            case '=': addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);break;
+            case '/':
+                if (match(currentCharacter)) {//double-slash czyli komentarz
+                    ignoreLine();
+                }else {
+                    addToken(TokenType.SLASH);
+                }break;
+        }
+    }
+    private void ignoreLine(){
+        char c='0';
+        while(c!='\n' && !isFinishedScanning()){
+            c=getCurrentChar();
         }
     }
 
@@ -90,14 +110,21 @@ public class Lexer {
         tokens.add(new Token(tokenType, text, literal, lineCounter));
     }
 
-    private boolean match(char character){
+    private boolean match(char expected){
         if(isFinishedScanning())
             return false;
-        return source.charAt(currentCharacterPosition) == character;
+
+        if(source.charAt(currentCharacterPosition) != expected)
+            return false;
+
+        currentCharacterPosition++;
+        return true;
     }
+
     private char getCurrentChar(){
         return source.charAt(currentCharacterPosition++);
     }
+
     private boolean isFinishedScanning(){
         return currentCharacterPosition >= source.length();
     }
