@@ -22,8 +22,6 @@ public class Lexer {
         singleCharacterTokens.put(')', TokenType.RIGHT_PAREN);
         singleCharacterTokens.put('{', TokenType.LEFT_BRACE);
         singleCharacterTokens.put('}', TokenType.RIGHT_BRACE);
-        //charToToken.put('/', TokenType.SLASH);
-        //charToToken.put('!', TokenType.EXCL_MARK);
 
         keywords = new HashMap<>();
         keywords.put("if",      TokenType.IF);
@@ -69,18 +67,13 @@ public class Lexer {
         return tokens;
     }
     private void scanToken(){
-        char currentCharacter = getCurrentChar();
+        char currentCharacter = advance();
 
-        if(currentCharacter == '\n'){
-            lineCounter++;
-            return;
-        }
-        //sprawdz czy jest single char
-        //pozniej czy jest np == lub <=
         if(singleCharacterTokens.containsKey(currentCharacter)) {
             addToken(singleCharacterTokens.get(currentCharacter));
             return;
         }
+        //znaki typu >=, == itp.
         switch(currentCharacter){
             case '!': addToken(match('=') ? TokenType.EXCL_MARK_EQUAL : TokenType.EXCL_MARK);break;
             case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);break;
@@ -92,12 +85,19 @@ public class Lexer {
                 }else {
                     addToken(TokenType.SLASH);
                 }break;
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            case '\n': lineCounter++; break;
+            case '"': readString(); break;
+
         }
     }
     private void ignoreLine(){
         char c='0';
         while(c!='\n' && !isFinishedScanning()){
-            c=getCurrentChar();
+            c= advance();
         }
     }
 
@@ -121,8 +121,28 @@ public class Lexer {
         return true;
     }
 
-    private char getCurrentChar(){
+    private void readString(){
+        while(!isFinishedScanning() && peek() != '"'){
+            if(peek() == '\n')
+                lineCounter++;
+            advance();
+        }
+        if(!(peek() == '"')){
+            Kac.error(lineCounter, "unterminated string");
+            return;
+        }
+        advance();
+        addToken(TokenType.STRING, source.substring(start+1, currentCharacterPosition-1));
+    }
+
+    private char advance(){
         return source.charAt(currentCharacterPosition++);
+    }
+
+    private char peek(){
+        if(isFinishedScanning())
+            return '\0';
+        return source.charAt(currentCharacterPosition);
     }
 
     private boolean isFinishedScanning(){
