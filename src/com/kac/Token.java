@@ -16,6 +16,6 @@ public class Token {
 
     @Override
     public String toString(){
-        return "TYPE:" + tokenType + " LEX:" + lexeme + " LINE:" + lineNumber;
+        return "TYPE:" + tokenType + " LEX:" + lexeme + " VALUE:" + value +" LINE:" + lineNumber;
     }
 }

@@ -91,14 +91,52 @@ public class Lexer {
                 break;
             case '\n': lineCounter++; break;
             case '"': readString(); break;
+            default:
+                if(isDigit(currentCharacter)){
+                    readNumber();
+                }else if(isAlphaNumeric(currentCharacter)){
+                    readIndentifier();
+                }else
+                    Kac.error(lineCounter, "Unexpected character.");
 
         }
     }
+
     private void ignoreLine(){
         char c='0';
         while(c!='\n' && !isFinishedScanning()){
             c= advance();
         }
+    }
+
+    private boolean isDigit(char c){
+        return c>='0' && c<='9';
+    }
+
+    private void readNumber(){
+        while(isDigit(peek())){
+            advance();
+        }
+
+        if(peek() == '.' && isDigit(peekNext()))
+            //taking "."
+            advance();
+
+        while(isDigit(peek())){
+            advance();
+        }
+
+        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, currentCharacterPosition)));
+    }
+
+    private boolean isAlpha(char c){
+        return  c >= 'a' && c <= 'z' ||
+                c >= 'A' && c <= 'Z' ||
+                c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c){
+        return isAlpha(c) || isDigit(c);
     }
 
     private void addToken(TokenType tokenType){
@@ -119,6 +157,20 @@ public class Lexer {
 
         currentCharacterPosition++;
         return true;
+    }
+
+    private void readIndentifier(){
+        while (isAlphaNumeric(peek()))
+            advance();
+
+        String lexeme = source.substring(start, currentCharacterPosition).toLowerCase();
+
+        TokenType type = keywords.get(lexeme);
+
+        if(type == null)
+            addToken(TokenType.USER_DEFINED);
+        else
+            addToken(type);
     }
 
     private void readString(){
@@ -145,6 +197,11 @@ public class Lexer {
         return source.charAt(currentCharacterPosition);
     }
 
+    private char peekNext(){
+        if(currentCharacterPosition +1 >= length)
+            return '\0';
+        return source.charAt(currentCharacterPosition+1);
+    }
     private boolean isFinishedScanning(){
         return currentCharacterPosition >= source.length();
     }
