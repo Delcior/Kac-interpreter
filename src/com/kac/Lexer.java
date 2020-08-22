@@ -15,7 +15,7 @@ public class Lexer {
         singleCharacterTokens.put(';', TokenType.SEMICOLON);
         singleCharacterTokens.put('.', TokenType.DOT);
         singleCharacterTokens.put(',', TokenType.COMMA);
-        singleCharacterTokens.put('*', TokenType.STAR);
+        //singleCharacterTokens.put('*', TokenType.STAR);
         singleCharacterTokens.put('+', TokenType.PLUS);
         singleCharacterTokens.put('-', TokenType.MINUS);
         singleCharacterTokens.put('(', TokenType.LEFT_PAREN);
@@ -82,6 +82,8 @@ public class Lexer {
             case '/':
                 if (match(currentCharacter)) {//double-slash czyli komentarz
                     ignoreLine();
+                }else if(match('*')){
+                    comment();
                 }else {
                     addToken(TokenType.SLASH);
                 }break;
@@ -106,6 +108,16 @@ public class Lexer {
         char c='0';
         while(c!='\n' && !isFinishedScanning()){
             c= advance();
+        }
+    }
+
+    private void comment(){
+        while(!isFinishedScanning()){
+            if(peek() == '*' && peekNext() == '/'){
+                advance();advance();
+                break;
+            }
+            advance();
         }
     }
 
