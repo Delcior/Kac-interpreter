@@ -42,6 +42,9 @@ public class GeneratorAST {
         writer.close();
     }
 
+    private static void generateVisitorInterface(PrintWriter writer, String interfaceName, List<String> types){
+
+    }
     private static void generateType(PrintWriter writer, String outerClassName, String innerClassName, String fields){
         writer.println("    static class " + innerClassName + " extends " + outerClassName + "{");
         //fields
