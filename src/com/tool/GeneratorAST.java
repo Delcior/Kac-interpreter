@@ -42,8 +42,23 @@ public class GeneratorAST {
         writer.close();
     }
 
-    private static void generateVisitorInterface(PrintWriter writer, String interfaceName, List<String> types){
+    private static void generateVisitorInterface(PrintWriter writer, String baseName, List<String> types){
+        //interface for visitor pattern
+        writer.println("    interface Visitor<T> {");
 
+        for (String type : types) {
+            String typeName = type.split(":")[0].trim();
+            writer.println("    R visit" + typeName + baseName + "(" +
+                    typeName + " " + baseName.toLowerCase() + ");");
+
+            for(String field : types) {
+                String typeOfField = field.trim().split(" ")[0];
+                String nameOfField = field.trim().split(" ")[1];
+                writer.println("        R visit" + typeOfField + nameOfField +
+                         "(" + typeName + " " +baseName.toLowerCase() + ");");
+            }
+            writer.println("    }");
+        }
     }
     private static void generateType(PrintWriter writer, String outerClassName, String innerClassName, String fields){
         writer.println("    static class " + innerClassName + " extends " + outerClassName + "{");
