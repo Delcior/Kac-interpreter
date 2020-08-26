@@ -33,32 +33,27 @@ public class GeneratorAST {
         writer.println("import java.util.List;\n");
         writer.println("abstract class " + baseClassName + " {");
 
+        generateVisitorInterface(writer, baseClassName, types);
         for(String type : types){
             String typeName = type.split(":")[0].trim();
             String fields = type.split(":")[1].trim();
             generateType(writer, baseClassName, typeName, fields);
         }
+        writer.println("\n\tabstract <T> T accept(Visitor<T> visitor);");
         writer.println("}");
         writer.close();
     }
 
     private static void generateVisitorInterface(PrintWriter writer, String baseName, List<String> types){
         //interface for visitor pattern
-        writer.println("    interface Visitor<T> {");
+        writer.println("\tinterface Visitor<T> {");
 
         for (String type : types) {
             String typeName = type.split(":")[0].trim();
-            writer.println("    R visit" + typeName + baseName + "(" +
+            writer.println("\t\tT visit" + typeName + baseName + "(" +
                     typeName + " " + baseName.toLowerCase() + ");");
-
-            for(String field : types) {
-                String typeOfField = field.trim().split(" ")[0];
-                String nameOfField = field.trim().split(" ")[1];
-                writer.println("        R visit" + typeOfField + nameOfField +
-                         "(" + typeName + " " +baseName.toLowerCase() + ");");
-            }
-            writer.println("    }");
         }
+        writer.println("\t}");
     }
     private static void generateType(PrintWriter writer, String outerClassName, String innerClassName, String fields){
         writer.println("    static class " + innerClassName + " extends " + outerClassName + "{");
@@ -70,12 +65,16 @@ public class GeneratorAST {
             writer.println("        final " + typeOfField + " " + nameOfField + ";");
         }
         //constructor
-        writer.println("\n        " + innerClassName + "(" + fields + ") {");
+        writer.println("\n\t\t" + innerClassName + "(" + fields + ") {");
         for(String field : arrOfFields){
             String nameOfField = field.trim().split(" ")[1];
-            writer.println("          this." + nameOfField + " = " + nameOfField + ";");
+            writer.println("\t\t\tthis." + nameOfField + " = " + nameOfField + ";");
         }
-        writer.println("        }");
-        writer.println("    }");
+        writer.println("\t\t}");
+        writer.println("\n\t\t@Override");
+        writer.println("\t\t<T> T accept(Visitor<T> visitor) {");
+        writer.println("\t\t\treturn visitor.visit"+innerClassName + outerClassName + "(this);");
+        writer.println("\t\t}");
+        writer.println("\t}");
     }
 }
