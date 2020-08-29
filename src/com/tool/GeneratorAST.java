@@ -43,7 +43,6 @@ public class GeneratorAST {
         writer.println("}");
         writer.close();
     }
-
     private static void generateVisitorInterface(PrintWriter writer, String baseName, List<String> types){
         //interface for visitor pattern
         writer.println("\tinterface Visitor<T> {");
