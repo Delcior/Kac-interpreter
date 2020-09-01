@@ -15,7 +15,6 @@ public class Lexer {
         singleCharacterTokens.put(';', TokenType.SEMICOLON);
         singleCharacterTokens.put('.', TokenType.DOT);
         singleCharacterTokens.put(',', TokenType.COMMA);
-        //singleCharacterTokens.put('*', TokenType.STAR);
         singleCharacterTokens.put('+', TokenType.PLUS);
         singleCharacterTokens.put('-', TokenType.MINUS);
         singleCharacterTokens.put('(', TokenType.LEFT_PAREN);
