@@ -11,8 +11,40 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    //each grammar rule will be separate method
-    //I'll use recursive descent parsing, it means
-    //traversing from lowest precedence to highest
-    
+    private Expr expression(){
+        return equality();
+    }
+
+    private Expr equality(){
+        return new Expr.Literal("token");
+    }
+
+    //utility functions
+
+    private Token peek(){
+        return tokens.get(current);
+    }
+
+    private boolean isAtEnd(){
+        return peek().tokenType == TokenType.EOF;
+    }
+
+    private boolean match(TokenType... types){
+        for(TokenType type : types){
+            if(check(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean check(TokenType type){
+        if(isAtEnd())
+            return false;
+        return peek().tokenType == type;
+    }
+
+    private Token advance(){
+        return tokens.get(current++);
+    }
 }
