@@ -11,12 +11,68 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    //methods are in order of precendence level(from lowest to highest)
     private Expr expression(){
         return equality();
     }
 
     private Expr equality(){
-        return new Expr.Literal("token");
+        Expr expression = comparison();
+
+        while(match(TokenType.EXCL_MARK_EQUAL, TokenType.EQUAL_EQUAL)){
+            Token operator = previous();
+            Expr comparisonLeft = comparison();
+            expression = new Expr.Binary(expression, operator, comparisonLeft);
+        }
+
+        return expression;
+    }
+
+    private Expr comparison(){
+        Expr expression = addition();
+
+        while(match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)){
+            Token operator = previous();
+            Expr additionLeft = addition();
+            expression = new Expr.Binary(expression, operator, additionLeft);
+        }
+
+        return expression;
+    }
+
+    private Expr addition(){
+        Expr expression = multiplication();
+
+        while(match(TokenType.MINUS, TokenType.PLUS)){
+            Token operator = previous();
+            Expr multiplicationLeft = multiplication();
+            expression = new Expr.Binary(expression, operator, multiplicationLeft);
+        }
+
+        return expression;
+    }
+
+    private Expr multiplication(){
+        Expr expression = unary();
+
+        while(match(TokenType.SLASH, TokenType.STAR)){
+            Token operator = previous();
+            Expr unaryRight = unary();
+            expression = new Expr.Binary(expression, operator, unaryRight);
+        }
+
+        return expression;
+    }
+
+    private Expr unary(){
+        if(match(TokenType.EXCL_MARK, TokenType.MINUS)){
+            Token operator = previous();
+            Expr unary = unary();
+
+            return new Expr.Unary(operator, unary);
+        }
+
+        return primary();
     }
 
     private Expr primary(){
