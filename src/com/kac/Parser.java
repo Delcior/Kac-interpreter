@@ -1,8 +1,10 @@
 package com.kac;
 
+import java.awt.event.PaintEvent;
 import java.util.List;
 
 public class Parser {
+    private class ParserError extends RuntimeException {}
     //list of tokens used to create abstract syntax tree
     private final List<Token> tokens;
     private int current = 0;
@@ -11,6 +13,13 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    public Expr parse(){
+        try{
+            return expression();
+        }catch (ParserError er){
+            return null;
+        }
+    }
     //methods are in order of precendence level(from lowest to highest)
     private Expr expression(){
         return equality();
@@ -91,7 +100,8 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expected ) after expression");
             return groupingExpression;
         }
-        return null;
+
+        throw error(peek().lineNumber, "Expected primary value");
     }
     //utility functions
     private Token peek(){
@@ -126,10 +136,19 @@ public class Parser {
         return tokens.get(current-1);
     }
 
-    private Token consume(TokenType type, String message){
+    private Token consume(TokenType type, String errorMessage){
         if(check(type))
             return advance();
 
-        return null;
+        throw error(peek().lineNumber, errorMessage);
+    }
+
+    private ParserError error(int lineNumber, String errorMessage){
+        Kac.error(lineNumber, errorMessage);
+        return new ParserError();
+    }
+
+    private void synchronize(){
+        //method used to synchronize parser after encountering error
     }
 }

@@ -50,6 +50,10 @@ public class Kac {
         for (Token token : tokens) {
             System.out.println(token);
         }
+        System.out.println("==== ast printer ====");
+        Parser parser = new Parser(tokens);
+        astPrinter printer = new astPrinter();
+        System.out.println(printer.print(parser.parse()));
     }
 
     static void error(int line, String errorMessage){
