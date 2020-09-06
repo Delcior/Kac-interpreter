@@ -22,7 +22,22 @@ public class Parser {
     }
     //methods are in order of precendence level(from lowest to highest)
     private Expr expression(){
-        return equality();
+        Expr expression = comma();
+        if(match(TokenType.SEMICOLON))
+            return expression;
+        throw error(peek().lineNumber, "Expected expression terminator --> ';'");
+    }
+
+    private Expr comma(){
+        Expr expression = equality();
+
+        while(match(TokenType.COMMA)){
+            Token operator = previous();
+            Expr equalityLeft = equality();
+            expression = new Expr.Binary(expression, operator, equalityLeft);
+        }
+
+        return expression;
     }
 
     private Expr equality(){
@@ -100,7 +115,6 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expected ) after expression");
             return groupingExpression;
         }
-
         throw error(peek().lineNumber, "Expected primary value");
     }
     //utility functions
