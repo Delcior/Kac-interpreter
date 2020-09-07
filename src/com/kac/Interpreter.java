@@ -20,9 +20,10 @@ public class Interpreter implements Expr.Visitor<Object>{
         Object left = evaluate(expr);
         Object right = evaluate(expr);
 
-        switch (expr.operator.tokenType){
-
-        }
+//        switch (expr.operator.tokenType){
+//
+//        }
+        return null;
     }
 
     @Override
