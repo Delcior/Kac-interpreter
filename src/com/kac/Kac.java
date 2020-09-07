@@ -53,7 +53,9 @@ public class Kac {
         System.out.println("==== ast printer ====");
         Parser parser = new Parser(tokens);
         astPrinter printer = new astPrinter();
-        System.out.println(printer.print(parser.parse()));
+        Expr ast = parser.parse();
+        if(ast != null)
+            System.out.println(printer.print(ast));
     }
 
     static void error(int line, String errorMessage){

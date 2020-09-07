@@ -8,6 +8,7 @@ public class Parser {
     //list of tokens used to create abstract syntax tree
     private final List<Token> tokens;
     private int current = 0;
+    private boolean hadError = false;
 
     public Parser(List<Token> tokens){
         this.tokens = tokens;
@@ -39,7 +40,8 @@ public class Parser {
 
         return expression;
     }
-
+    //TODO: add ternary operator support
+    //TODO: add error production for binary expressions
     private Expr equality(){
         Expr expression = comparison();
 
@@ -115,7 +117,7 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expected ) after expression");
             return groupingExpression;
         }
-        throw error(peek().lineNumber, "Expected primary value");
+        throw error(peek().lineNumber, "Expected expression");
     }
     //utility functions
     private Token peek(){
