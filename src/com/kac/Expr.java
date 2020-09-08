@@ -1,6 +1,5 @@
 package com.kac;
 
-import java.util.List;
 
 abstract class Expr {
 	interface Visitor<T> {
