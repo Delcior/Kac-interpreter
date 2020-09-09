@@ -2,13 +2,38 @@ package com.kac;
 
 public class Interpreter implements Expr.Visitor<Object>{
 
-    private class RuntimeError extends RuntimeException{
+    private static class RuntimeError extends RuntimeException{
         final Token token;
 
         RuntimeError(Token token, String message){
             super(message);
             this.token=token;
         }
+    }
+
+    public String interpret(Expr expr){
+        try{
+            Object result = evaluate(expr);
+            return convertToString(result);
+        }catch (RuntimeError exc){
+            Kac.runtimeError(exc.token.lineNumber, "RuntimeError !");
+            return null;
+        }
+    }
+
+    private String convertToString(Object value){
+        if(value == null)
+            return "null";
+
+        if(value instanceof Number){
+            String stringValue = value.toString();
+            if(stringValue.endsWith(".0"))
+                return stringValue.substring(0, stringValue.length()-2);
+            return stringValue;
+        }
+
+        return value.toString();
+
     }
     private Object evaluate(Expr expr){
         return expr.accept(this);
@@ -30,7 +55,7 @@ public class Interpreter implements Expr.Visitor<Object>{
             return (String)left + right;
 //        if(left instanceof Integer && right instanceof Integer)
 //            return (int)left + (int)right;
-        if(left instanceof Double && right instanceof Double)
+        if(left instanceof Number && right instanceof Number)
             return (double)left + (double)right;
 
         throw new RuntimeError(operator, "Allowed '+' operations on types: string + string, (double | int) + (double | int)");
@@ -39,7 +64,7 @@ public class Interpreter implements Expr.Visitor<Object>{
     private Object minusLogic(Token operator, Object left, Object right){
 //        if(left instanceof Integer && right instanceof Integer)
 //            return (int)left - (int)right;
-        if(left instanceof Double && right instanceof Double)
+        if(left instanceof Number && right instanceof Number)
             return (double)left - (double)right;
 
         throw new RuntimeError(operator, "Allowed '-' operations on types:(double | int) + (double | int)");
@@ -63,8 +88,8 @@ public class Interpreter implements Expr.Visitor<Object>{
 
     @Override
     public Object visitBinaryExpr(Expr.Binary expr) {
-        Object left = evaluate(expr);
-        Object right = evaluate(expr);
+        Object left = evaluate(expr.left);
+        Object right = evaluate(expr.right);
 
         switch (expr.operator.tokenType){
             case PLUS:

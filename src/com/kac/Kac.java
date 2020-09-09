@@ -47,19 +47,23 @@ public class Kac {
             return;
         }
         // For now just print the tokens.
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
-        System.out.println("==== ast printer ====");
+//        for (Token token : tokens) {
+//            System.out.println(token);
+//        }
         Parser parser = new Parser(tokens);
         astPrinter printer = new astPrinter();
+        Interpreter interpreter = new Interpreter();
         Expr ast = parser.parse();
         if(ast != null)
-            System.out.println(printer.print(ast));
+            System.out.println(interpreter.interpret(ast));
     }
 
     static void error(int line, String errorMessage){
         System.err.println("Error occurred in line: " + line + ". Message: " + errorMessage);
         hadError=true;
+    }
+
+    static void runtimeError(int line, String message){
+        System.out.println("Runtime error at line: " + line + ". Message: " + message);
     }
 }

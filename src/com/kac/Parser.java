@@ -4,7 +4,7 @@ import java.awt.event.PaintEvent;
 import java.util.List;
 
 public class Parser {
-    private class ParserError extends RuntimeException {}
+    private static class ParserError extends RuntimeException {}
     //list of tokens used to create abstract syntax tree
     private final List<Token> tokens;
     private int current = 0;
