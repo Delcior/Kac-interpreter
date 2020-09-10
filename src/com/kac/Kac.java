@@ -54,6 +54,7 @@ public class Kac {
         astPrinter printer = new astPrinter();
         Interpreter interpreter = new Interpreter();
         Expr ast = parser.parse();
+        //todo: Error reporter interface and implement strategy pattern maybe?
         if(ast != null)
             System.out.println(interpreter.interpret(ast));
     }

@@ -70,6 +70,27 @@ public class Interpreter implements Expr.Visitor<Object>{
         throw new RuntimeError(operator, "Allowed '-' operations on types:(double | int) + (double | int)");
     }
 
+    private Object greaterLogic(Token operator, Object left, Object right){
+        if(left instanceof Number && right instanceof Number)
+            return (double)left > (double)right;
+
+        if(left instanceof String && right instanceof String)
+            return left.toString().compareTo(right.toString()) > 0;
+
+        throw new RuntimeError(operator, "Incompatible Types near '>' token");
+
+    }
+
+    private Object greaterEqualLogic(Token operator, Object left, Object right){
+        if(left instanceof Number && right instanceof Number)
+            return (double)left >= (double)right;
+
+        if(left instanceof String && right instanceof String)
+            return left.toString().compareTo(right.toString()) >= 0;
+
+        throw new RuntimeError(operator, "Incompatible Types near '>=' token");
+    }
+
     private void checkNumberOperands(Token operator, Object left, Object right){
         if(left instanceof Double && right instanceof Double)
             return;
@@ -80,6 +101,7 @@ public class Interpreter implements Expr.Visitor<Object>{
     private boolean isEqual(Object left, Object right){
         if(left == null && right == null)
             return true;
+
         if(left == null)
             return false;
 
@@ -103,17 +125,13 @@ public class Interpreter implements Expr.Visitor<Object>{
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left / (double)right;
             case GREATER:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left > (double)right;
+                return greaterLogic(expr.operator, left, right);
             case GREATER_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left >= (double)right;
+                return greaterEqualLogic(expr.operator, left, right);
             case LESS:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left < (double)right;
+                return !(boolean)greaterEqualLogic(expr.operator, left, right);
             case LESS_EQUAL:
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left <= (double)right;
+                return !(boolean)greaterLogic(expr.operator, left, right);
             case EQUAL_EQUAL:
                 return isEqual(left, right);
             case EXCL_MARK_EQUAL:
@@ -137,7 +155,7 @@ public class Interpreter implements Expr.Visitor<Object>{
         Object right = evaluate(expr.right);
 
         return switch (expr.operator.tokenType) {
-            //check instanceof string and throw runtime error
+            //todo:check instanceof string and throw runtime error
             case MINUS -> -(double) right;
             case EXCL_MARK -> !isTrue(right);
             default -> null;

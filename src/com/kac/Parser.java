@@ -23,10 +23,10 @@ public class Parser {
     }
     //methods are in order of precendence level(from lowest to highest)
     private Expr expression(){
-        Expr expression = comma();
-        if(match(TokenType.SEMICOLON))
-            return expression;
-        throw error(peek().lineNumber, "Expected expression terminator --> ';'");
+        return comma();
+//        if(match(TokenType.SEMICOLON))
+//            return expression;
+//        throw error(peek().lineNumber, "Expected expression terminator --> ';'");
     }
 
     private Expr comma(){
