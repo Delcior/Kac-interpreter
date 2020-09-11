@@ -16,7 +16,7 @@ public class Interpreter implements Expr.Visitor<Object>{
             Object result = evaluate(expr);
             return convertToString(result);
         }catch (RuntimeError exc){
-            Kac.runtimeError(exc.token.lineNumber, "RuntimeError !");
+            Kac.runtimeError(exc.token.lineNumber,  exc.getMessage());
             return null;
         }
     }
@@ -49,27 +49,38 @@ public class Interpreter implements Expr.Visitor<Object>{
     }
 
     private Object plusLogic(Token operator, Object left, Object right){
-        //3 cases: int + int, double + double/int, string + string
         //add support for more number types
         if(left instanceof String && right instanceof String)
             return (String)left + right;
-//        if(left instanceof Integer && right instanceof Integer)
-//            return (int)left + (int)right;
+
         if(left instanceof Number && right instanceof Number)
             return (double)left + (double)right;
 
-        throw new RuntimeError(operator, "Allowed '+' operations on types: string + string, (double | int) + (double | int)");
+        if(left instanceof String)
+            return left + right.toString();
+
+        if(right instanceof String)
+            return left.toString() + right;
+
+        throw new RuntimeError(operator, "Bad type near '+' operator. Allowed types: [String, Number]");
     }
 
     private Object minusLogic(Token operator, Object left, Object right){
-//        if(left instanceof Integer && right instanceof Integer)
-//            return (int)left - (int)right;
         if(left instanceof Number && right instanceof Number)
             return (double)left - (double)right;
 
-        throw new RuntimeError(operator, "Allowed '-' operations on types:(double | int) + (double | int)");
+        throw new RuntimeError(operator, "Bad type near '-' operator. Allowed types: [String, Number]");
     }
 
+    private Object divisionLogic(Token operator, Object left, Object right){
+        checkNumberOperands(operator, left, right);
+
+        if((double)right == 0)
+            throw new RuntimeError(operator, "Hold up, we dont do that here -> division by zer0");
+
+        return (double)left / (double)right;
+
+    }
     private Object greaterLogic(Token operator, Object left, Object right){
         if(left instanceof Number && right instanceof Number)
             return (double)left > (double)right;
@@ -91,8 +102,29 @@ public class Interpreter implements Expr.Visitor<Object>{
         throw new RuntimeError(operator, "Incompatible Types near '>=' token");
     }
 
+    private Object lessLogic(Token operator, Object left, Object right){
+        if(left instanceof Number && right instanceof Number)
+            return (double)left < (double)right;
+
+        if(left instanceof String && right instanceof String)
+            return left.toString().compareTo(right.toString()) < 0;
+
+        throw new RuntimeError(operator, "Incompatible Types near '<' token");
+
+    }
+
+    private Object lessEqualLogic(Token operator, Object left, Object right){
+        if(left instanceof Number && right instanceof Number)
+            return (double)left >= (double)right;
+
+        if(left instanceof String && right instanceof String)
+            return left.toString().compareTo(right.toString()) <= 0;
+
+        throw new RuntimeError(operator, "Incompatible Types near '<=' token");
+    }
+
     private void checkNumberOperands(Token operator, Object left, Object right){
-        if(left instanceof Double && right instanceof Double)
+        if(left instanceof Number && right instanceof Number)
             return;
 
         throw new RuntimeError(operator, "Operand must be a number!");
@@ -121,17 +153,16 @@ public class Interpreter implements Expr.Visitor<Object>{
             case STAR:
                 checkNumberOperands(expr.operator, left, right);
                 return (double)left * (double)right;
-            case SLASH://todo: check if right is not zero
-                checkNumberOperands(expr.operator, left, right);
-                return (double)left / (double)right;
-            case GREATER:
+            case SLASH:
+                return divisionLogic(expr.operator, left, right);
+            case GREATER://todo: add suppoer for "string" > 3, which means if "string" is longer that 3
                 return greaterLogic(expr.operator, left, right);
             case GREATER_EQUAL:
                 return greaterEqualLogic(expr.operator, left, right);
             case LESS:
-                return !(boolean)greaterEqualLogic(expr.operator, left, right);
+                return lessLogic(expr.operator, left, right);
             case LESS_EQUAL:
-                return !(boolean)greaterLogic(expr.operator, left, right);
+                return lessEqualLogic(expr.operator, left, right);
             case EQUAL_EQUAL:
                 return isEqual(left, right);
             case EXCL_MARK_EQUAL:
