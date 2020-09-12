@@ -1,6 +1,7 @@
 package com.kac;
 
 import java.awt.event.PaintEvent;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Parser {
@@ -14,19 +15,37 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Expr parse(){
-        try{
-            return expression();
-        }catch (ParserError er){
-            return null;
+    public List<Stmt> parse(){
+        List<Stmt> statements = new LinkedList<>();
+
+        while(!isAtEnd()) {
+            statements.add(statement());
         }
+        
+        return statements;
     }
-    //methods are in order of precendence level(from lowest to highest)
+    //methods for Stmt class
+    private Stmt expressionStatement(){
+        Expr expression = expression();
+        consume(TokenType.SEMICOLON, "Expected ; after expression");
+        return new Stmt.Expression(expression);
+    }
+
+    private Stmt printStatement(){
+        Expr expression = expression();
+        consume(TokenType.SEMICOLON, "Expected ; after value");
+        return new Stmt.Print(expression);
+    }
+    //utility functions
+    private Stmt statement(){
+        if (match(TokenType.PRINT)) {
+            return printStatement();
+        }
+        return expressionStatement();
+    }
+    //methods for Expr class [in order of precendence level(from lowest to highest)]
     private Expr expression(){
         return comma();
-//        if(match(TokenType.SEMICOLON))
-//            return expression;
-//        throw error(peek().lineNumber, "Expected expression terminator --> ';'");
     }
 
     private Expr comma(){

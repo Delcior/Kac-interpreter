@@ -1,6 +1,9 @@
 package com.kac;
 
-public class Interpreter implements Expr.Visitor<Object>{
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
+
 
     private static class RuntimeError extends RuntimeException{
         final Token token;
@@ -11,13 +14,12 @@ public class Interpreter implements Expr.Visitor<Object>{
         }
     }
 
-    public String interpret(Expr expr){
+    public void interpret(List<Stmt> statements){
         try{
-            Object result = evaluate(expr);
-            return convertToString(result);
+            for(Stmt stmt : statements)
+                execute(stmt);
         }catch (RuntimeError exc){
             Kac.runtimeError(exc.token.lineNumber,  exc.getMessage());
-            return null;
         }
     }
 
@@ -30,6 +32,9 @@ public class Interpreter implements Expr.Visitor<Object>{
 
         return value.toString();
 
+    }
+    private Void execute(Stmt stmt){
+        return stmt.accept(this);
     }
     private Object evaluate(Expr expr){
         return expr.accept(this);
@@ -140,6 +145,20 @@ public class Interpreter implements Expr.Visitor<Object>{
         String stringNumber = number.toString();
         return stringNumber.substring(0, stringNumber.length()-2);
     }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        Object value = evaluate(stmt.expression);
+        System.out.println(convertToString(value));
+        return null;
+    }
+
     @Override
     public Object visitBinaryExpr(Expr.Binary expr) {
         Object left = evaluate(expr.left);

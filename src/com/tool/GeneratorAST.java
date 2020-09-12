@@ -14,11 +14,9 @@ public class GeneratorAST {
 
         String outputDirectory = args[0];
         try {
-            generateAST(outputDirectory, "Expr", Arrays.asList(
-                "Binary   : Expr left, Token operator, Expr right",
-                "Grouping : Expr expression",
-                "Literal  : Object value",
-                "Unary    : Token operator, Expr right"
+            generateAST(outputDirectory, "Stmt", Arrays.asList(
+                "Expression : Expr expression",
+                "Print      : Expr expression"
             ));
         }catch (IOException e){
             e.printStackTrace();

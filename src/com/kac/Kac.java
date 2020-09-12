@@ -53,10 +53,9 @@ public class Kac {
         Parser parser = new Parser(tokens);
         astPrinter printer = new astPrinter();
         Interpreter interpreter = new Interpreter();
-        Expr ast = parser.parse();
+        List<Stmt> statementsAST = parser.parse();
         //todo: Error reporter interface and implement strategy pattern maybe?
-        if(ast != null)
-            System.out.println(interpreter.interpret(ast));
+        interpreter.interpret(statementsAST);
     }
 
     static void error(int line, String errorMessage){
