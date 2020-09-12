@@ -25,12 +25,8 @@ public class Interpreter implements Expr.Visitor<Object>{
         if(value == null)
             return "null";
 
-        if(value instanceof Number){
-            String stringValue = value.toString();
-            if(stringValue.endsWith(".0"))
-                return stringValue.substring(0, stringValue.length()-2);
-            return stringValue;
-        }
+        if(value instanceof Double)
+            return cutTheDecimal(value);
 
         return value.toString();
 
@@ -53,20 +49,20 @@ public class Interpreter implements Expr.Visitor<Object>{
         if(left instanceof String && right instanceof String)
             return (String)left + right;
 
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return (double)left + (double)right;
 
         if(left instanceof String)
-            return left + right.toString();
+            return left + cutTheDecimal(right);
 
         if(right instanceof String)
-            return left.toString() + right;
+            return cutTheDecimal(left) + right;
 
         throw new RuntimeError(operator, "Bad type near '+' operator. Allowed types: [String, Number]");
     }
 
     private Object minusLogic(Token operator, Object left, Object right){
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return (double)left - (double)right;
 
         throw new RuntimeError(operator, "Bad type near '-' operator. Allowed types: [String, Number]");
@@ -82,7 +78,7 @@ public class Interpreter implements Expr.Visitor<Object>{
 
     }
     private Object greaterLogic(Token operator, Object left, Object right){
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return (double)left > (double)right;
 
         if(left instanceof String && right instanceof String)
@@ -93,7 +89,7 @@ public class Interpreter implements Expr.Visitor<Object>{
     }
 
     private Object greaterEqualLogic(Token operator, Object left, Object right){
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return (double)left >= (double)right;
 
         if(left instanceof String && right instanceof String)
@@ -103,7 +99,7 @@ public class Interpreter implements Expr.Visitor<Object>{
     }
 
     private Object lessLogic(Token operator, Object left, Object right){
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return (double)left < (double)right;
 
         if(left instanceof String && right instanceof String)
@@ -114,7 +110,7 @@ public class Interpreter implements Expr.Visitor<Object>{
     }
 
     private Object lessEqualLogic(Token operator, Object left, Object right){
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return (double)left >= (double)right;
 
         if(left instanceof String && right instanceof String)
@@ -124,7 +120,7 @@ public class Interpreter implements Expr.Visitor<Object>{
     }
 
     private void checkNumberOperands(Token operator, Object left, Object right){
-        if(left instanceof Number && right instanceof Number)
+        if(left instanceof Double && right instanceof Double)
             return;
 
         throw new RuntimeError(operator, "Operand must be a number!");
@@ -140,6 +136,10 @@ public class Interpreter implements Expr.Visitor<Object>{
         return left.equals(right);
     }
 
+    private String cutTheDecimal(Object number){
+        String stringNumber = number.toString();
+        return stringNumber.substring(0, stringNumber.length()-2);
+    }
     @Override
     public Object visitBinaryExpr(Expr.Binary expr) {
         Object left = evaluate(expr.left);

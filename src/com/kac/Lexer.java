@@ -126,13 +126,11 @@ public class Lexer {
     }
 
     private void readNumber(){
-        boolean isDouble = false;
         while(isDigit(peek())){
             advance();
         }
 
         if(peek() == '.' && isDigit(peekNext())) {
-            isDouble = true;
             //taking "."
             advance();
         }
@@ -140,10 +138,8 @@ public class Lexer {
         while(isDigit(peek())){
             advance();
         }
-        if(isDouble)
-            addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, currentCharacterPosition)));
-        else
-            addToken(TokenType.NUMBER, Integer.parseInt(source.substring(start, currentCharacterPosition)));
+
+        addToken(TokenType.NUMBER, Double.parseDouble(source.substring(start, currentCharacterPosition)));
     }
 
     private boolean isAlpha(char c){
