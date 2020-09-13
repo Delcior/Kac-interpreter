@@ -156,9 +156,9 @@ public class Lexer {
         addToken(tokenType, null);
     }
 
-    private void addToken(TokenType tokenType, Object literal){
+    private void addToken(TokenType tokenType, Object value){
         String text = source.substring(start, currentCharacterPosition);
-        tokens.add(new Token(tokenType, text, literal, lineCounter));
+        tokens.add(new Token(tokenType, text, value, lineCounter));
     }
 
     private boolean match(char expected){
@@ -171,7 +171,7 @@ public class Lexer {
         currentCharacterPosition++;
         return true;
     }
-
+    //todo: consider storing booleans with actual value
     private void readIndentifier(){
         while (isAlphaNumeric(peek()))
             advance();

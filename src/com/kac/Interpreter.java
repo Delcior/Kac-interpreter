@@ -50,7 +50,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     private Object plusLogic(Token operator, Object left, Object right){
-        //add support for more number types
         if(left instanceof String && right instanceof String)
             return (String)left + right;
 

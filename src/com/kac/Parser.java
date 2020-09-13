@@ -9,7 +9,6 @@ public class Parser {
     //list of tokens used to create abstract syntax tree
     private final List<Token> tokens;
     private int current = 0;
-    private boolean hadError = false;
 
     public Parser(List<Token> tokens){
         this.tokens = tokens;
@@ -125,9 +124,9 @@ public class Parser {
             return new Expr.Literal(previous().value);
 
         if(match(TokenType.FALSE))
-            return new Expr.Literal(previous().value);
+            return new Expr.Literal(false);
         if(match(TokenType.TRUE))
-            return new Expr.Literal(previous().value);
+            return new Expr.Literal(true);
         if(match(TokenType.NULL))
             return new Expr.Literal(null);
 

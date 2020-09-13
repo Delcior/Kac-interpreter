@@ -46,12 +46,12 @@ public class Kac {
             hadError=false;
             return;
         }
+
         // For now just print the tokens.
 //        for (Token token : tokens) {
 //            System.out.println(token);
 //        }
         Parser parser = new Parser(tokens);
-        astPrinter printer = new astPrinter();
         Interpreter interpreter = new Interpreter();
         List<Stmt> statementsAST = parser.parse();
         //todo: Error reporter interface and implement strategy pattern maybe?
