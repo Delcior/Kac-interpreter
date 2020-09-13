@@ -13,6 +13,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             this.token=token;
         }
     }
+    private Environment environment;
+
+    Interpreter(){
+        environment = new Environment();
+    }
 
     public void interpret(List<Stmt> statements){
         try{

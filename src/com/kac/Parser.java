@@ -20,7 +20,7 @@ public class Parser {
         while(!isAtEnd()) {
             statements.add(statement());
         }
-        
+
         return statements;
     }
     //methods for Stmt class
@@ -48,12 +48,24 @@ public class Parser {
     }
 
     private Expr comma(){
-        Expr expression = equality();
+        Expr expression = assignment();
 
         while(match(TokenType.COMMA)){
             Token operator = previous();
-            Expr equalityLeft = equality();
+            Expr equalityLeft = assignment();
             expression = new Expr.Binary(expression, operator, equalityLeft);
+        }
+
+        return expression;
+    }
+    
+    private Expr assignment(){
+        Expr expression = equality();
+
+        while(match(TokenType.EQUAL)){
+            Token operator = previous();
+            Expr equalityRight = equality();
+            expression = new Expr.Binary(expression, operator, equalityRight);
         }
 
         return expression;
@@ -65,8 +77,8 @@ public class Parser {
 
         while(match(TokenType.EXCL_MARK_EQUAL, TokenType.EQUAL_EQUAL)){
             Token operator = previous();
-            Expr comparisonLeft = comparison();
-            expression = new Expr.Binary(expression, operator, comparisonLeft);
+            Expr comparisonRight = comparison();
+            expression = new Expr.Binary(expression, operator, comparisonRight);
         }
 
         return expression;
@@ -77,8 +89,8 @@ public class Parser {
 
         while(match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)){
             Token operator = previous();
-            Expr additionLeft = addition();
-            expression = new Expr.Binary(expression, operator, additionLeft);
+            Expr additionRight = addition();
+            expression = new Expr.Binary(expression, operator, additionRight);
         }
 
         return expression;
@@ -89,8 +101,8 @@ public class Parser {
 
         while(match(TokenType.MINUS, TokenType.PLUS)){
             Token operator = previous();
-            Expr multiplicationLeft = multiplication();
-            expression = new Expr.Binary(expression, operator, multiplicationLeft);
+            Expr multiplicationRight = multiplication();
+            expression = new Expr.Binary(expression, operator, multiplicationRight);
         }
 
         return expression;
@@ -120,6 +132,9 @@ public class Parser {
     }
 
     private Expr primary(){
+        if(match(TokenType.USER_DEFINED))
+            return new Expr.Literal(previous().lexeme);
+
         if(match(TokenType.NUMBER, TokenType.STRING))
             return new Expr.Literal(previous().value);
 

@@ -65,6 +65,7 @@ public class Lexer {
         tokens.add(new Token(TokenType.EOF,"", null, lineCounter));
         return tokens;
     }
+
     private void scanToken(){
         char currentCharacter = advance();
 
@@ -181,7 +182,7 @@ public class Lexer {
         TokenType type = keywords.get(lexeme);
 
         if(type == null)
-            addToken(TokenType.USER_DEFINED);
+            addToken(TokenType.USER_DEFINED, lexeme);
         else
             addToken(type);
     }

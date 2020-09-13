@@ -14,4 +14,8 @@ public class Environment {
     Environment(Environment outerEnv){
         this.outerEnv = outerEnv;
     }
+
+    public void add(String varName, Object value){
+        values.put(varName, value);
+    }
 }
