@@ -15,7 +15,10 @@ public class Environment {
         this.outerEnv = outerEnv;
     }
 
-    public void add(String varName, Object value){
-        values.put(varName, value);
+    public void add(Token name, Object value){
+        values.put(name.lexeme, value);
+    }
+    public Object get(String name){
+        return values.get(name);
     }
 }

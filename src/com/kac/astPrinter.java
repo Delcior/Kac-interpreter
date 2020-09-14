@@ -39,4 +39,9 @@ public class astPrinter implements Expr.Visitor<String>{
     public String visitUnaryExpr(Expr.Unary expr) {
         return paren(expr.operator.lexeme, expr.right);
     }
+
+    @Override
+    public String visitVariableExpr(Expr.Variable var) {
+        return null;
+    }
 }

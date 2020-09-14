@@ -18,12 +18,38 @@ public class Parser {
         List<Stmt> statements = new LinkedList<>();
 
         while(!isAtEnd()) {
-            statements.add(statement());
+            statements.add(declaration());
         }
 
         return statements;
     }
     //methods for Stmt class
+    private Stmt declaration(){
+        //todo: try catch with synchronize()
+        if(match(TokenType.VAR)){
+            return varDeclaration();
+        }
+        return statement();
+    }
+
+    private Stmt varDeclaration(){
+        Token name = consume(TokenType.USER_DEFINED, "Expected user defined variable");
+        Expr initialValue = null;
+
+        if(match(TokenType.EQUAL))
+            initialValue = expression();
+
+        consume(TokenType.SEMICOLON, "Expected ; after statement.");
+        return new Stmt.VarDeclaration(name, initialValue);
+    }
+
+    private Stmt statement(){
+        if (match(TokenType.PRINT)) {
+            return printStatement();
+        }
+        return expressionStatement();
+    }
+
     private Stmt expressionStatement(){
         Expr expression = expression();
         consume(TokenType.SEMICOLON, "Expected ; after expression");
@@ -35,13 +61,7 @@ public class Parser {
         consume(TokenType.SEMICOLON, "Expected ; after value");
         return new Stmt.Print(expression);
     }
-    //utility functions
-    private Stmt statement(){
-        if (match(TokenType.PRINT)) {
-            return printStatement();
-        }
-        return expressionStatement();
-    }
+
     //methods for Expr class [in order of precendence level(from lowest to highest)]
     private Expr expression(){
         return comma();
@@ -58,7 +78,7 @@ public class Parser {
 
         return expression;
     }
-    
+
     private Expr assignment(){
         Expr expression = equality();
 
@@ -133,7 +153,7 @@ public class Parser {
 
     private Expr primary(){
         if(match(TokenType.USER_DEFINED))
-            return new Expr.Literal(previous().lexeme);
+            return new Expr.Variable(previous());
 
         if(match(TokenType.NUMBER, TokenType.STRING))
             return new Expr.Literal(previous().value);

@@ -53,4 +53,9 @@ public class ReversePolishNotation implements Expr.Visitor<String> {
 
         return result + " " + expr.operator.lexeme;
     }
+
+    @Override
+    public String visitVariableExpr(Expr.Variable var) {
+        return null;
+    }
 }

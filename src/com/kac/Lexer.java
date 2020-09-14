@@ -32,8 +32,9 @@ public class Lexer {
         keywords.put("true",    TokenType.TRUE);
         keywords.put("false",   TokenType.FALSE);
         keywords.put("return",  TokenType.RETURN);
-        keywords.put("print",   TokenType.PRINT);
         keywords.put("super",   TokenType.SUPER);
+        keywords.put("print",   TokenType.PRINT);
+        keywords.put("var",     TokenType.VAR);
         keywords.put("this",    TokenType.THIS);
         keywords.put("null",    TokenType.NULL);
         keywords.put("string",  TokenType.STRING);
@@ -182,7 +183,7 @@ public class Lexer {
         TokenType type = keywords.get(lexeme);
 
         if(type == null)
-            addToken(TokenType.USER_DEFINED, lexeme);
+            addToken(TokenType.USER_DEFINED);
         else
             addToken(type);
     }

@@ -48,14 +48,14 @@ public class Kac {
         }
 
         // For now just print the tokens.
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+//        for (Token token : tokens) {
+//            System.out.println(token);
+//        }
         Parser parser = new Parser(tokens);
         Interpreter interpreter = new Interpreter();
         List<Stmt> statementsAST = parser.parse();
         //todo: Error reporter interface and implement strategy pattern maybe?
-        //interpreter.interpret(statementsAST);
+        interpreter.interpret(statementsAST);
     }
 
     static void error(int line, String errorMessage){

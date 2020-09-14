@@ -13,7 +13,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             this.token=token;
         }
     }
-    private Environment environment;
+    private final Environment environment;
 
     Interpreter(){
         environment = new Environment();
@@ -38,6 +38,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         return value.toString();
 
     }
+
     private Void execute(Stmt stmt){
         return stmt.accept(this);
     }
@@ -164,6 +165,12 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Void visitVarDeclarationStmt(Stmt.VarDeclaration stmt) {
+        environment.add(stmt.name, evaluate(stmt.initialValue));
+        return null;
+    }
+
+    @Override
     public Object visitBinaryExpr(Expr.Binary expr) {
         Object left = evaluate(expr.left);
         Object right = evaluate(expr.right);
@@ -214,5 +221,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             case EXCL_MARK -> !isTrue(right);
             default -> null;
         };
+    }
+
+    @Override
+    public Object visitVariableExpr(Expr.Variable var) {
+        return environment.get(var.name.lexeme);
     }
 }
