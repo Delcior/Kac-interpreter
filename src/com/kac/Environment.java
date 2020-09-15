@@ -18,7 +18,11 @@ public class Environment {
     public void add(Token name, Object value){
         values.put(name.lexeme, value);
     }
-    public Object get(String name){
-        return values.get(name);
+    public Object get(Token name){
+        Object value = values.get(name.lexeme);
+
+        if(value == null)
+            throw new Interpreter.RuntimeError(name, "No such variable declared: " + name.lexeme);
+        return value;
     }
 }

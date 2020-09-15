@@ -4,8 +4,7 @@ import java.util.List;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
-
-    private static class RuntimeError extends RuntimeException{
+    static class RuntimeError extends RuntimeException{
         final Token token;
 
         RuntimeError(Token token, String message){
@@ -245,6 +244,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Object visitVariableExpr(Expr.Variable var) {
-        return environment.get(var.name.lexeme);
+        return environment.get(var.name);
     }
 }

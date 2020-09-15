@@ -85,7 +85,7 @@ public class Parser {
 
     private Expr assignment(){
         Expr expression = equality();
-
+        //todo:consider not throwing error
         while(match(TokenType.EQUAL)){
             if(!(expression instanceof Expr.Variable))
                 throw error(peek().lineNumber, "Can't assign value to an r-value expression.");
