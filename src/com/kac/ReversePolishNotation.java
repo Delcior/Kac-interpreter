@@ -58,4 +58,9 @@ public class ReversePolishNotation implements Expr.Visitor<String> {
     public String visitVariableExpr(Expr.Variable var) {
         return null;
     }
+
+    @Override
+    public String visitAssignmentExpr(Expr.Assignment expr) {
+        return null;
+    }
 }

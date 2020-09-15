@@ -54,6 +54,11 @@ public class Kac {
         Parser parser = new Parser(tokens);
         Interpreter interpreter = new Interpreter();
         List<Stmt> statementsAST = parser.parse();
+
+        if(hadError){
+            hadError = false;
+            return;
+        }
         //todo: Error reporter interface and implement strategy pattern maybe?
         interpreter.interpret(statementsAST);
     }

@@ -1,6 +1,5 @@
 package com.kac;
 
-import java.awt.event.PaintEvent;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,10 +25,15 @@ public class Parser {
     //methods for Stmt class
     private Stmt declaration(){
         //todo: try catch with synchronize()
-        if(match(TokenType.VAR)){
-            return varDeclaration();
+        try {
+            if (match(TokenType.VAR)) {
+                return varDeclaration();
+            }
+            return statement();
+        }catch(ParserError e){
+            synchronize();
+            return null;
         }
-        return statement();
     }
 
     private Stmt varDeclaration(){
@@ -72,8 +76,8 @@ public class Parser {
 
         while(match(TokenType.COMMA)){
             Token operator = previous();
-            Expr equalityLeft = assignment();
-            expression = new Expr.Binary(expression, operator, equalityLeft);
+            Expr equalityRight = assignment();
+            expression = new Expr.Binary(expression, operator, equalityRight);
         }
 
         return expression;
@@ -83,9 +87,11 @@ public class Parser {
         Expr expression = equality();
 
         while(match(TokenType.EQUAL)){
-            Token operator = previous();
+            if(!(expression instanceof Expr.Variable))
+                throw error(peek().lineNumber, "Can't assign value to an r-value expression.");
+
             Expr equalityRight = equality();
-            expression = new Expr.Binary(expression, operator, equalityRight);
+            expression = new Expr.Assignment((Expr.Variable)expression, equalityRight);
         }
 
         return expression;
@@ -170,7 +176,7 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expected ) after expression");
             return groupingExpression;
         }
-        throw error(peek().lineNumber, "Expected expression");
+        throw error(peek().lineNumber, "Expected primary value, instead got " + peek().tokenType);
     }
     //utility functions
     private Token peek(){
@@ -214,10 +220,19 @@ public class Parser {
 
     private ParserError error(int lineNumber, String errorMessage){
         Kac.error(lineNumber, errorMessage);
+        //some errors do not require unwinding so throwing is not always necessary
         return new ParserError();
     }
 
     private void synchronize(){
         //method used to synchronize parser after encountering error
+
+        while(!isAtEnd()){
+            if(peek().tokenType == TokenType.SEMICOLON) {
+                advance();
+                return;
+            }
+            advance();
+        }
     }
 }

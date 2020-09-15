@@ -8,6 +8,19 @@ abstract class Expr {
 		T visitLiteralExpr(Literal expr);
 		T visitUnaryExpr(Unary expr);
 		T visitVariableExpr(Variable var);
+		T visitAssignmentExpr(Assignment expr);
+	}
+	static class Assignment extends Expr{
+		final Variable variable;
+		final Expr value;
+
+		Assignment(Variable variable, Expr value){
+			this.variable = variable;
+			this.value = value;
+		}
+
+		@Override
+		<T> T accept(Visitor<T> visitor){return visitor.visitAssignmentExpr(this);}
 	}
     static class Binary extends Expr{
         final Expr left;
