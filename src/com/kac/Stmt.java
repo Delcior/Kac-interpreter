@@ -7,6 +7,7 @@ abstract class Stmt {
 		T visitExpressionStmt(Expression stmt);
 		T visitPrintStmt(Print stmt);
 		T visitVarDeclarationStmt(VarDeclaration stmt);
+		T visitScopeStmt(Scope stmt);
 	}
     static class Expression extends Stmt{
         final Expr expression;
@@ -42,6 +43,15 @@ abstract class Stmt {
 		}
 		@Override
 		<T> T accept(Visitor<T> visitor){ return visitor.visitVarDeclarationStmt(this);}
+	}
+	static class Scope extends Stmt{
+		final List<Stmt> statements;
+
+		Scope(List<Stmt> statements){
+			this.statements = statements;
+		}
+		@Override
+		<T> T accept(Visitor<T> visitor){ return visitor.visitScopeStmt(this);}
 	}
 	abstract <T> T accept(Visitor<T> visitor);
 }
