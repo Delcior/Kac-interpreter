@@ -51,6 +51,8 @@ public class Parser {
         if (match(TokenType.PRINT)) {
             return printStatement();
         }
+        if(match(TokenType.LEFT_BRACE))
+            return scopeStatement();
         return expressionStatement();
     }
 
@@ -66,6 +68,17 @@ public class Parser {
         return new Stmt.Print(expression);
     }
 
+    private Stmt scopeStatement(){
+        List<Stmt> statements = new LinkedList<>();
+
+        while(!isAtEnd()){
+            if(match(TokenType.RIGHT_BRACE))
+                return new Stmt.Scope(statements);
+            statements.add(declaration());
+        }
+
+        throw error(peek().lineNumber, "Missing } token");
+    }
     //methods for Expr class [in order of precendence level(from lowest to highest)]
     private Expr expression(){
         return comma();
@@ -176,7 +189,7 @@ public class Parser {
             consume(TokenType.RIGHT_PAREN, "Expected ) after expression");
             return groupingExpression;
         }
-        throw error(peek().lineNumber, "Expected primary value, instead got " + peek().tokenType);
+        throw error(peek().lineNumber, "Expected primary value, instead got " + peek().lexeme);
     }
     //utility functions
     private Token peek(){

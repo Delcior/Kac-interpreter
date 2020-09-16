@@ -12,7 +12,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             this.token=token;
         }
     }
-    private final Environment environment;
+    private Environment environment;
 
     Interpreter(){
         environment = new Environment();
@@ -184,6 +184,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitScopeStmt(Stmt.Scope stmt) {
+        Environment current_scope = environment;
+        environment = new Environment(environment);
+
+        for(Stmt statement : stmt.statements)
+            statement.accept(this);
+
+        environment = current_scope;
         return null;
     }
 
