@@ -150,15 +150,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         return stringNumber.substring(0, stringNumber.length()-2);
     }
 
-    private Void assignmentLogic(Token operator, Object left, Object right){
-        System.out.println(right.getClass());
-        if(left instanceof Expr.Variable){
-            environment.add(((Expr.Variable) left).name, right);
-            return null;
-        }
-        throw new RuntimeError(operator, "Expected lvalue token");
-    }
-
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         evaluate(stmt.expression);
@@ -175,9 +166,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Void visitVarDeclarationStmt(Stmt.VarDeclaration stmt) {
         if(stmt.initialValue == null)
-            environment.add(stmt.name, null);
+            environment.declare(stmt.name, null);
         else
-            environment.add(stmt.name, evaluate(stmt.initialValue));
+            environment.declare(stmt.name, evaluate(stmt.initialValue));
 
         return null;
     }
@@ -197,7 +188,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Object visitAssignmentExpr(Expr.Assignment expr) {
         Object value = evaluate(expr.value);
-        environment.add(expr.variable.name, value);
+        environment.assign(expr.variable.name, value);
         return null;
     }
 

@@ -15,14 +15,28 @@ public class Environment {
         this.outerEnv = outerEnv;
     }
 
-    public void add(Token name, Object value){
+    public void declare(Token name, Object value){
+        if(values.containsKey(name.lexeme))
+            throw new Interpreter.RuntimeError(name, "Variable '" + name.lexeme +"'" +
+                    "is already declared");
+        values.put(name.lexeme, value);
+    }
+
+    public void assign(Token name, Object value){
         if(values.containsKey(name.lexeme))
             values.put(name.lexeme, value);
+        assignInOuterEnv(outerEnv, name, value);
     }
-    //todo: make different methods for add and for declare variable
-    private void addInOuterEnv(Environment outerEnv, Token name, Object value){
-        
 
+    private Void assignInOuterEnv(Environment outerEnv, Token name, Object value){
+        if(outerEnv != null){
+            if(outerEnv.values.containsKey(name.lexeme)) {
+                outerEnv.values.put(name.lexeme, value);
+                return null;
+            }
+            return assignInOuterEnv(outerEnv.outerEnv, name, value);
+        }
+        throw new Interpreter.RuntimeError(name, "Variable '" + name.lexeme +"' is not declared");
     }
     public Object get(Token name){
         Object value = values.get(name.lexeme);
@@ -30,7 +44,7 @@ public class Environment {
         if(value == null){
             value = checkOuterEnv(outerEnv, name);
             if(value == null)
-                throw new Interpreter.RuntimeError(name, "No such variable declared: " + name.lexeme);
+                throw new Interpreter.RuntimeError(name, "Variable '" + name.lexeme +"' is not declared");
         }
         return value;
     }
