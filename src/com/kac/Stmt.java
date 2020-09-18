@@ -8,6 +8,7 @@ abstract class Stmt {
 		T visitPrintStmt(Print stmt);
 		T visitVarDeclarationStmt(VarDeclaration stmt);
 		T visitScopeStmt(Scope stmt);
+		T visitIfStmt(If stmt);
 	}
     static class Expression extends Stmt{
         final Expr expression;
@@ -20,6 +21,20 @@ abstract class Stmt {
 		<T> T accept(Visitor<T> visitor) {
 			return visitor.visitExpressionStmt(this);
 		}
+	}
+	static class If extends  Stmt{
+		Expr condition;
+		Stmt ifBranch;
+		Stmt elseBranch;
+
+		If(Expr condition, Stmt ifBranch, Stmt elseBranch){
+			this.condition = condition;
+			this.ifBranch = ifBranch;
+			this.elseBranch = elseBranch;
+		}
+
+		@Override
+		<T> T accept(Visitor<T> visitor){return visitor.visitIfStmt(this);}
 	}
     static class Print extends Stmt{
         final Expr expression;

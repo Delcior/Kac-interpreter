@@ -173,6 +173,7 @@ public class Lexer {
         currentCharacterPosition++;
         return true;
     }
+    //todo: add null support ( var a=null;)
     //todo: consider storing booleans with actual value
     private void readIndentifier(){
         while (isAlphaNumeric(peek()))
