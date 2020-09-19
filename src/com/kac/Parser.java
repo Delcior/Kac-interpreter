@@ -51,11 +51,30 @@ public class Parser {
         if (match(TokenType.PRINT)) {
             return printStatement();
         }
+
         if(match(TokenType.LEFT_BRACE))
             return scopeStatement();
+
+        if(match(TokenType.IF))
+            return ifStatement();
+
         return expressionStatement();
     }
+    private Stmt ifStatement(){
+        Expr condition;
+        Stmt ifBranch;
+        Stmt elseBranch = null;
 
+        consume(TokenType.LEFT_PAREN, "Expected ( before 'if' condition");
+        condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expected ) after 'if' condition");
+
+        ifBranch = statement();
+        if(match(TokenType.ELSE))
+            elseBranch = statement();
+
+        return new Stmt.If(condition, ifBranch, elseBranch);
+    }
     private Stmt expressionStatement(){
         Expr expression = expression();
         consume(TokenType.SEMICOLON, "Expected ; after expression");
