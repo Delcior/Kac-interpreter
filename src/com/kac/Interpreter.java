@@ -202,8 +202,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
         while(isTrue(evaluate(stmt.condition))){
-            execute(stmt.statement);
+            execute(stmt.body);
         }
+        return null;
+    }
+
+    @Override
+    public Void visitForStmt(Stmt.For stmt) {
         return null;
     }
 

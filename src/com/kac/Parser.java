@@ -63,6 +63,7 @@ public class Parser {
 
         return expressionStatement();
     }
+
     private Stmt whileStatement(){
         consume(TokenType.LEFT_PAREN, "Expected ( before 'while' condition");
         Expr condition = expression();
@@ -70,6 +71,10 @@ public class Parser {
         Stmt statement = statement();
 
         return new Stmt.While(condition, statement);
+    }
+
+    private Stmt forStatement(){
+        return null;
     }
     private Stmt ifStatement(){
         Expr condition;
@@ -93,6 +98,7 @@ public class Parser {
     }
 
     private Stmt printStatement(){
+
         Expr expression = expression();
         consume(TokenType.SEMICOLON, "Expected ; after value");
         return new Stmt.Print(expression);
@@ -214,7 +220,6 @@ public class Parser {
 
             return new Expr.Unary(operator, unary);
         }
-
         return primary();
     }
 

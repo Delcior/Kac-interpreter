@@ -10,6 +10,7 @@ abstract class Stmt {
 		T visitScopeStmt(Scope stmt);
 		T visitIfStmt(If stmt);
 		T visitWhileStmt(While stmt);
+		T visitForStmt(For stmt);
 	}
     static class Expression extends Stmt{
         final Expr expression;
@@ -25,14 +26,29 @@ abstract class Stmt {
 	}
 	static class While extends Stmt{
 		final Expr condition;
-		final Stmt statement;
+		final Stmt body;
 
-		public While(Expr condition, Stmt statement){
+		public While(Expr condition, Stmt body){
 			this.condition = condition;
-			this.statement = statement;
+			this.body = body;
 		}
 		@Override
 		<T> T accept(Visitor<T> visitor){return visitor.visitWhileStmt(this);}
+	}
+	static class For extends Stmt{
+		final Stmt initializer;
+		final Expr condition;
+		final Stmt stateModifier;
+		final Stmt body;
+
+		public For(Stmt initializer, Expr condition, Stmt stateModifier, Stmt body){
+			this.initializer = initializer;
+			this.condition = condition;
+			this.stateModifier = stateModifier;
+			this.body = body;
+		}
+		@Override
+		<T> T accept(Visitor<T> visitor){ return visitor.visitForStmt(this);}
 	}
 	static class If extends  Stmt{
 		Expr condition;
