@@ -58,7 +58,18 @@ public class Parser {
         if(match(TokenType.IF))
             return ifStatement();
 
+        if(match(TokenType.WHILE))
+            return whileStatement();
+
         return expressionStatement();
+    }
+    private Stmt whileStatement(){
+        consume(TokenType.LEFT_PAREN, "Expected ( before 'while' condition");
+        Expr condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expected ) after 'while' condition");
+        Stmt statement = statement();
+
+        return new Stmt.While(condition, statement);
     }
     private Stmt ifStatement(){
         Expr condition;

@@ -200,6 +200,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Void visitWhileStmt(Stmt.While stmt) {
+        while(isTrue(evaluate(stmt.condition))){
+            execute(stmt.statement);
+        }
+        return null;
+    }
+
+    @Override
     public Object visitAssignmentExpr(Expr.Assignment expr) {
         Object value = evaluate(expr.value);
         environment.assign(expr.variable.name, value);

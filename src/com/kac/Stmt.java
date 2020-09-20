@@ -9,6 +9,7 @@ abstract class Stmt {
 		T visitVarDeclarationStmt(VarDeclaration stmt);
 		T visitScopeStmt(Scope stmt);
 		T visitIfStmt(If stmt);
+		T visitWhileStmt(While stmt);
 	}
     static class Expression extends Stmt{
         final Expr expression;
@@ -21,6 +22,17 @@ abstract class Stmt {
 		<T> T accept(Visitor<T> visitor) {
 			return visitor.visitExpressionStmt(this);
 		}
+	}
+	static class While extends Stmt{
+		final Expr condition;
+		final Stmt statement;
+
+		public While(Expr condition, Stmt statement){
+			this.condition = condition;
+			this.statement = statement;
+		}
+		@Override
+		<T> T accept(Visitor<T> visitor){return visitor.visitWhileStmt(this);}
 	}
 	static class If extends  Stmt{
 		Expr condition;
