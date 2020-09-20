@@ -205,6 +205,24 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         environment.assign(expr.variable.name, value);
         return null;
     }
+    //todo: consider returning actual objects instead of boolean value
+    @Override
+    public Object visitLogicalOrExpr(Expr.LogicalOR expr) {
+        boolean resultLeft = isTrue(evaluate(expr.left));
+
+        if(resultLeft)
+            return true;
+
+        return isTrue(evaluate(expr.right));
+    }
+
+    @Override
+    public Object visitLogicalAndExpr(Expr.LogicalAND expr) {
+        boolean left = isTrue(evaluate(expr.left));
+        boolean right = isTrue(evaluate(expr.right));
+
+        return left && right;
+    }
 
     @Override
     public Object visitBinaryExpr(Expr.Binary expr) {

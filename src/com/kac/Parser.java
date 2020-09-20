@@ -116,16 +116,34 @@ public class Parser {
     }
 
     private Expr assignment(){
-        Expr expression = equality();
+        Expr expression = logicalOr();
         //todo:consider not throwing error
         while(match(TokenType.EQUAL)){
             if(!(expression instanceof Expr.Variable))
                 throw error(peek().lineNumber, "Can't assign value to an r-value expression.");
 
-            Expr equalityRight = equality();
-            expression = new Expr.Assignment((Expr.Variable)expression, equalityRight);
+            Expr right = logicalOr();
+            expression = new Expr.Assignment((Expr.Variable)expression, right);
         }
 
+        return expression;
+    }
+    private Expr logicalOr(){
+        Expr expression = logicAND();
+
+        if(match(TokenType.OR)){
+            Expr right = logicAND();
+            return new Expr.LogicalOR(expression, right);
+        }
+        return expression;
+    }
+    private Expr logicAND(){
+        Expr expression = equality();
+
+        if(match(TokenType.AND)){
+            Expr right = equality();
+            return new Expr.LogicalAND(expression, right);
+        }
         return expression;
     }
     //TODO: add ternary operator support
