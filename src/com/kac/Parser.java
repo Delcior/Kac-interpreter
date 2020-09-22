@@ -61,6 +61,8 @@ public class Parser {
         if(match(TokenType.WHILE))
             return whileStatement();
 
+        if(match(TokenType.FOR))
+            return forStatement();
         return expressionStatement();
     }
 
@@ -74,6 +76,21 @@ public class Parser {
     }
 
     private Stmt forStatement(){
+        Stmt initializer = null;
+        Expr condition = null;
+        Expr stateModifier = null;
+        Stmt body = null;
+
+        consume(TokenType.LEFT_PAREN, "Expected ( before 'for' condition");
+        if(!match(TokenType.SEMICOLON)) {
+            if(match(TokenType.VAR))
+                initializer = varDeclaration();
+            else
+                initializer = statement();
+        }else
+            consume(TokenType.SEMICOLON, "Expected ; after 'for' initializer");
+    
+
         return null;
     }
     private Stmt ifStatement(){
