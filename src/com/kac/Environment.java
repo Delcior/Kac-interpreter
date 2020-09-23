@@ -23,9 +23,10 @@ public class Environment {
     }
 
     public void assign(Token name, Object value){
-        if(values.containsKey(name.lexeme))
-            values.put(name.lexeme, value);
-        assignInOuterEnv(outerEnv, name, value);
+        if(values.containsKey(name.lexeme)) {
+            values.replace(name.lexeme, value);
+        }else
+            assignInOuterEnv(outerEnv, name, value);
     }
 
     private Void assignInOuterEnv(Environment outerEnv, Token name, Object value){
@@ -38,6 +39,7 @@ public class Environment {
         }
         throw new Interpreter.RuntimeError(name, "Variable '" + name.lexeme +"' is not declared");
     }
+
     public Object get(Token name){
         Object value = values.get(name.lexeme);
 

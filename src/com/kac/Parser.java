@@ -63,6 +63,7 @@ public class Parser {
 
         if(match(TokenType.FOR))
             return forStatement();
+
         return expressionStatement();
     }
 
@@ -78,7 +79,7 @@ public class Parser {
     private Stmt forStatement(){
         Stmt initializer = null;
         Expr condition = null;
-        Expr stateModifier = null;
+        Stmt stateModifier = null;
         Stmt body = null;
 
         consume(TokenType.LEFT_PAREN, "Expected ( before 'for' condition");
@@ -88,10 +89,23 @@ public class Parser {
             else
                 initializer = statement();
         }else
-            consume(TokenType.SEMICOLON, "Expected ; after 'for' initializer");
-    
+            consume(TokenType.SEMICOLON, "Expected ; after 'for' initializer 1");
 
-        return null;
+        if(!match(TokenType.SEMICOLON)) {
+            condition = expression();
+        }else
+            condition = new Expr.Literal(true);
+        consume(TokenType.SEMICOLON, "Expected ; after 'for' initializer 2");
+
+        if(!match(TokenType.SEMICOLON)) {
+            stateModifier = new Stmt.Expression(expression());
+        }
+
+        consume(TokenType.RIGHT_PAREN, "Expected ) after 'for' declaration, got " + peek().lexeme);
+
+        body = statement();
+
+        return new Stmt.For(initializer, condition, stateModifier, body);
     }
     private Stmt ifStatement(){
         Expr condition;
