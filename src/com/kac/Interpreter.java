@@ -220,6 +220,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Void visitFunctionDeclarationStmt(Stmt.FunctionDeclaration stmt) {
+        return null;
+    }
+
+    @Override
     public Object visitAssignmentExpr(Expr.Assignment expr) {
         Object value = evaluate(expr.value);
         environment.assign(expr.variable.name, value);

@@ -38,6 +38,7 @@ public class Lexer {
         keywords.put("this",    TokenType.THIS);
         keywords.put("null",    TokenType.NULL);
         keywords.put("string",  TokenType.STRING);
+        keywords.put("fun",  TokenType.FUN);
     }
 
     private List<Token> tokens;

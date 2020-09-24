@@ -11,6 +11,7 @@ abstract class Stmt {
 		T visitIfStmt(If stmt);
 		T visitWhileStmt(While stmt);
 		T visitForStmt(For stmt);
+		T visitFunctionDeclarationStmt(FunctionDeclaration stmt);
 	}
     static class Expression extends Stmt{
         final Expr expression;
@@ -95,6 +96,18 @@ abstract class Stmt {
 		}
 		@Override
 		<T> T accept(Visitor<T> visitor){ return visitor.visitScopeStmt(this);}
+	}
+	static class FunctionDeclaration extends Stmt{
+		final Token name;
+		final List<VarDeclaration> arguments;
+		final Stmt body;
+
+		FunctionDeclaration(Token name, List<VarDeclaration> arguments, Stmt body){
+			this.name = name;
+			this.arguments = arguments;
+			this.body = body;
+		}
+		<T> T accept(Visitor<T> visitor){return visitor.visitFunctionDeclarationStmt(this);}
 	}
 	abstract <T> T accept(Visitor<T> visitor);
 }
