@@ -26,8 +26,11 @@ public class Parser {
     private Stmt declaration(){
         //todo: try catch with synchronize()
         try {
-            if (match(TokenType.VAR)) {
+            if(match(TokenType.VAR)) {
                 return varDeclaration();
+            }
+            if(match(TokenType.FUN)){
+                return funDeclaration();
             }
             return statement();
         }catch(ParserError e){
@@ -35,7 +38,24 @@ public class Parser {
             return null;
         }
     }
+    private Stmt funDeclaration(){
+        Token funName = consume(TokenType.USER_DEFINED, "Expected function name");
+        List<Token> args = new LinkedList<>();
+        Stmt body;
 
+        consume(TokenType.LEFT_PAREN, "Expected ( near function declaration, got " + peek().lexeme);
+        do{
+            if(check(TokenType.RIGHT_PAREN)) {
+                consume(TokenType.RIGHT_PAREN, "Expected ) after args");
+                break;
+            }
+
+            Token arg = consume(TokenType.USER_DEFINED, "Expected argument literal");
+            args.add(arg);
+        }while(match(TokenType.COMMA));
+        body = statement();
+        return new Stmt.FunctionDeclaration(funName, args, body);
+    }
     private Stmt varDeclaration(){
         Token name = consume(TokenType.USER_DEFINED, "Expected user defined variable");
         Expr initialValue = null;

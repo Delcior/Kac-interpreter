@@ -99,10 +99,10 @@ abstract class Stmt {
 	}
 	static class FunctionDeclaration extends Stmt{
 		final Token name;
-		final List<VarDeclaration> arguments;
+		final List<Token> arguments;
 		final Stmt body;
 
-		FunctionDeclaration(Token name, List<VarDeclaration> arguments, Stmt body){
+		FunctionDeclaration(Token name, List<Token> arguments, Stmt body){
 			this.name = name;
 			this.arguments = arguments;
 			this.body = body;
