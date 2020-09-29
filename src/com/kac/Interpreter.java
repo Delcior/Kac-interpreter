@@ -1,6 +1,5 @@
 package com.kac;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +15,6 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
     private Environment environment;
     private HashMap<String,Callable> functions;
-    private List<Object> argValues;
 
     Interpreter(){
         environment = new Environment();
@@ -261,24 +259,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     public Object visitFunctionCall(Expr.FunctionCall expr) {
         Environment tmp = environment;
         environment = new Environment();
-
-        argValues = new ArrayList<>();
-        evaluate(expr.args);
-
         Callable fun = functions.get(expr.name.lexeme);
-
-        for(int i =0; i<fun.args.size(); i++)
-            environment.declare(fun.args.get(i), argValues.get(i));
+        
+        for(int i=0; i<expr.args.size(); i++)
+            environment.declare(fun.args.get(i), evaluate(expr.args.get(i)));
 
         execute(fun.body);
         environment = tmp;
-        return null;
-    }
-    private Object commaLogic(Object left, Object right){
-        if(left != null)
-            argValues.add(left);
-        argValues.add(right);
-
         return null;
     }
 
@@ -289,7 +276,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
         switch (expr.operator.tokenType){
             case COMMA:
-                return commaLogic(left, right);
+                return right;
             case PLUS:
                 return plusLogic(expr.operator, left, right);
             case MINUS:

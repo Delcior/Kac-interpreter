@@ -2,6 +2,7 @@ package com.kac;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 abstract class Expr {
 	interface Visitor<T> {
@@ -115,9 +116,9 @@ abstract class Expr {
 	}
 	static class FunctionCall extends Expr{
 		final Token name;
-		final Expr args;
+		final List<Expr> args;
 
-		FunctionCall(Token name, Expr args){
+		FunctionCall(Token name, List<Expr> args){
 			this.name = name;
 			this.args = args;
 		}

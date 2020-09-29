@@ -1,5 +1,6 @@
 package com.kac;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -278,10 +279,15 @@ public class Parser {
         if(match(TokenType.USER_DEFINED)) {
             Token name = previous();
             if(match(TokenType.LEFT_PAREN)){
-                Expr args = null;
+                List<Expr> args = new ArrayList<>();
+
                 if(!match(TokenType.RIGHT_PAREN)){
-                    args = expression();
-                    consume(TokenType.RIGHT_PAREN, "Expected ) after args of function call");
+                    do{
+                        args.add(logicalOr());
+                        if(check(TokenType.RIGHT_PAREN))
+                            consume(TokenType.RIGHT_PAREN, "Expected ) after args of function call");
+                    }while(match(TokenType.COMMA));
+
                 }
                 return new Expr.FunctionCall(name, args);
             }
