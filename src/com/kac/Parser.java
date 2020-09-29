@@ -45,13 +45,13 @@ public class Parser {
 
         consume(TokenType.LEFT_PAREN, "Expected ( near function declaration, got " + peek().lexeme);
         do{
+            Token arg = consume(TokenType.USER_DEFINED, "Expected argument literal");
+            args.add(arg);
+
             if(check(TokenType.RIGHT_PAREN)) {
                 consume(TokenType.RIGHT_PAREN, "Expected ) after args");
                 break;
             }
-
-            Token arg = consume(TokenType.USER_DEFINED, "Expected argument literal");
-            args.add(arg);
         }while(match(TokenType.COMMA));
         body = statement();
         return new Stmt.FunctionDeclaration(funName, args, body);
@@ -273,9 +273,20 @@ public class Parser {
         }
         return primary();
     }
+
     private Expr primary(){
-        if(match(TokenType.USER_DEFINED))
-            return new Expr.Variable(previous());
+        if(match(TokenType.USER_DEFINED)) {
+            Token name = previous();
+            if(match(TokenType.LEFT_PAREN)){
+                Expr args = null;
+                if(!match(TokenType.RIGHT_PAREN)){
+                    args = expression();
+                    consume(TokenType.RIGHT_PAREN, "Expected ) after args of function call");
+                }
+                return new Expr.FunctionCall(name, args);
+            }
+            return new Expr.Variable(name);
+        }
 
         if(match(TokenType.NUMBER, TokenType.STRING))
             return new Expr.Literal(previous().value);

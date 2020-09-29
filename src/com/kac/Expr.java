@@ -1,6 +1,8 @@
 package com.kac;
 
 
+import java.util.ArrayList;
+
 abstract class Expr {
 	interface Visitor<T> {
 		T visitBinaryExpr(Binary expr);
@@ -11,6 +13,7 @@ abstract class Expr {
 		T visitAssignmentExpr(Assignment expr);
 		T visitLogicalOrExpr(LogicalOR expr);
 		T visitLogicalAndExpr(LogicalAND expr);
+		T visitFunctionCall(FunctionCall expr);
 	}
 	static class Assignment extends Expr{
 		final Variable variable;
@@ -109,6 +112,17 @@ abstract class Expr {
 		}
 		@Override
 		<T> T accept(Visitor<T> visitor){return visitor.visitLogicalAndExpr(this);}
+	}
+	static class FunctionCall extends Expr{
+		final Token name;
+		final Expr args;
+
+		FunctionCall(Token name, Expr args){
+			this.name = name;
+			this.args = args;
+		}
+		@Override
+		<T> T accept(Visitor<T> visitor){return visitor.visitFunctionCall(this);}
 	}
 	abstract <T> T accept(Visitor<T> visitor);
 }
