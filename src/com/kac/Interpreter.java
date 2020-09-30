@@ -58,7 +58,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         }
         return true;
     }
-
+    //fun foo(n){ if(n>0) foo(n-1); print n;} foo(1);
     private Object plusLogic(Token operator, Object left, Object right){
         if(left instanceof String && right instanceof String)
             return (String)left + right;
@@ -259,14 +259,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Object visitFunctionCall(Expr.FunctionCall expr) {
-        Environment function_scope = new Environment();
+        Environment new_fun_scope = new Environment();
+        Environment current_scope = environment;
         Callable fun = functions.get(expr.name.lexeme);
         for(int i=0; i<expr.args.size(); i++)
-            function_scope.declare(fun.args.get(i), evaluate(expr.args.get(i)));
+            new_fun_scope.declare(fun.args.get(i), evaluate(expr.args.get(i)));
 
-        environment = function_scope;
+        environment = new_fun_scope;
         execute(fun.body);
-        environment = function_scope;
+        environment = current_scope;
         return null;
     }
 
