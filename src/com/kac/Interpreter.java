@@ -1,5 +1,7 @@
 package com.kac;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -257,15 +259,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Object visitFunctionCall(Expr.FunctionCall expr) {
-        Environment tmp = environment;
-        environment = new Environment();
+        Environment function_scope = new Environment();
         Callable fun = functions.get(expr.name.lexeme);
-        
         for(int i=0; i<expr.args.size(); i++)
-            environment.declare(fun.args.get(i), evaluate(expr.args.get(i)));
+            function_scope.declare(fun.args.get(i), evaluate(expr.args.get(i)));
 
+        environment = function_scope;
         execute(fun.body);
-        environment = tmp;
+        environment = function_scope;
         return null;
     }
 
