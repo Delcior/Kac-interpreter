@@ -12,6 +12,7 @@ abstract class Stmt {
 		T visitWhileStmt(While stmt);
 		T visitForStmt(For stmt);
 		T visitFunctionDeclarationStmt(FunctionDeclaration stmt);
+		T visitReturnStmt(Return stmt);
 	}
     static class Expression extends Stmt{
         final Expr expression;
@@ -29,7 +30,7 @@ abstract class Stmt {
 		final Expr condition;
 		final Stmt body;
 
-		public While(Expr condition, Stmt body){
+		While(Expr condition, Stmt body){
 			this.condition = condition;
 			this.body = body;
 		}
@@ -42,7 +43,7 @@ abstract class Stmt {
 		final Stmt stateModifier;
 		final Stmt body;
 
-		public For(Stmt initializer, Expr condition, Stmt stateModifier, Stmt body){
+		For(Stmt initializer, Expr condition, Stmt stateModifier, Stmt body){
 			this.initializer = initializer;
 			this.condition = condition;
 			this.stateModifier = stateModifier;
@@ -108,6 +109,14 @@ abstract class Stmt {
 			this.body = body;
 		}
 		<T> T accept(Visitor<T> visitor){return visitor.visitFunctionDeclarationStmt(this);}
+	}
+	static class Return extends Stmt{
+		final Expr value;
+
+		Return(Expr value){
+			this.value = value;
+		}
+		<T> T accept(Visitor<T> visitor){return visitor.visitReturnStmt(this);}
 	}
 	abstract <T> T accept(Visitor<T> visitor);
 }

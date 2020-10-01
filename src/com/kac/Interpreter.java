@@ -233,6 +233,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
 
     @Override
+    public Void visitReturnStmt(Stmt.Return stmt) {
+        Object value = evaluate(stmt.value);
+
+        throw new Return(value);
+    }
+
+    @Override
     public Object visitAssignmentExpr(Expr.Assignment expr) {
         Object value = evaluate(expr.value);
         environment.assign(expr.variable.name, value);
@@ -259,16 +266,21 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Object visitFunctionCall(Expr.FunctionCall expr) {
-        Environment new_fun_scope = new Environment();
+        Object retValue = null;
+        Environment new_fun_scope = new Environment(environment.getGlobalEnv());
         Environment current_scope = environment;
         Callable fun = functions.get(expr.name.lexeme);
         for(int i=0; i<expr.args.size(); i++)
             new_fun_scope.declare(fun.args.get(i), evaluate(expr.args.get(i)));
 
         environment = new_fun_scope;
-        execute(fun.body);
+        try{
+            execute(fun.body);
+        }catch (Return ret){
+            retValue = ret.returnValue();
+        }
         environment = current_scope;
-        return null;
+        return retValue;
     }
 
     @Override

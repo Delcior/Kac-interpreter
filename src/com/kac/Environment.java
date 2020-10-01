@@ -51,6 +51,15 @@ public class Environment {
         return value;
     }
 
+    public Environment getGlobalEnv(){
+        Environment tmp = this;
+
+        while(tmp.outerEnv != null)
+            tmp=tmp.outerEnv;
+
+        return tmp;
+    }
+
     private Object checkOuterEnv(Environment outerEnv, Token name){
         if(outerEnv == null)
             return null;

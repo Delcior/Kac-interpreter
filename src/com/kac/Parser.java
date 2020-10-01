@@ -46,14 +46,13 @@ public class Parser {
 
         consume(TokenType.LEFT_PAREN, "Expected ( near function declaration, got " + peek().lexeme);
         do{
+            if(check(TokenType.RIGHT_PAREN))
+                break;
             Token arg = consume(TokenType.USER_DEFINED, "Expected argument literal");
             args.add(arg);
 
-            if(check(TokenType.RIGHT_PAREN)) {
-                consume(TokenType.RIGHT_PAREN, "Expected ) after args");
-                break;
-            }
         }while(match(TokenType.COMMA));
+        consume(TokenType.RIGHT_PAREN, "Expected ) after args");
         body = statement();
         return new Stmt.FunctionDeclaration(funName, args, body);
     }
@@ -84,6 +83,9 @@ public class Parser {
 
         if(match(TokenType.FOR))
             return forStatement();
+
+        if(match(TokenType.RETURN))
+            return returnStatement();
 
         return expressionStatement();
     }
@@ -143,6 +145,13 @@ public class Parser {
 
         return new Stmt.If(condition, ifBranch, elseBranch);
     }
+
+    private Stmt returnStatement(){
+        Expr value = expression();
+        consume(TokenType.SEMICOLON, "Expected ; after return expression");
+        return new Stmt.Return(value);
+    }
+
     private Stmt expressionStatement(){
         Expr expression = expression();
         consume(TokenType.SEMICOLON, "Expected ; after expression");
