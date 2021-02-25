@@ -41,8 +41,8 @@ public class Lexer {
         keywords.put("fun",  TokenType.FUN);
     }
 
-    private List<Token> tokens;
-    private String source;
+    private final List<Token> tokens;
+    private final String source;
     //tracking lines/scanned characters
     private int start;
     private int currentCharacterPosition;

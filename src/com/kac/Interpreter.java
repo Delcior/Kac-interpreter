@@ -1,7 +1,5 @@
 package com.kac;
 
-import jdk.swing.interop.SwingInterOpUtils;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,8 +13,18 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             this.token=token;
         }
     }
+
+    static class Return extends RuntimeException{
+        final Object value;
+
+        Return(Object value){
+            this.value=value;
+        }
+        Object getValue(){return value;}
+    }
+
     private Environment environment;
-    private HashMap<String,Callable> functions;
+    private HashMap<String, Stmt.FunctionDeclaration> functions;
 
     Interpreter(){
         environment = new Environment();
@@ -226,8 +234,8 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitFunctionDeclarationStmt(Stmt.FunctionDeclaration stmt) {
-        Callable fun = new Callable(stmt.arguments, stmt.body);
-        functions.put(stmt.name.lexeme, fun);
+        //Callable fun = new Callable(stmt.arguments, stmt.body);
+        functions.put(stmt.name.lexeme, stmt);
 
         return null;
     }
@@ -269,15 +277,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         Object retValue = null;
         Environment new_fun_scope = new Environment(environment.getGlobalEnv());
         Environment current_scope = environment;
-        Callable fun = functions.get(expr.name.lexeme);
+        Stmt.FunctionDeclaration fun = functions.get(expr.name.lexeme);
         for(int i=0; i<expr.args.size(); i++)
-            new_fun_scope.declare(fun.args.get(i), evaluate(expr.args.get(i)));
+            new_fun_scope.declare(fun.arguments.get(i), evaluate(expr.args.get(i)));
 
         environment = new_fun_scope;
         try{
             execute(fun.body);
         }catch (Return ret){
-            retValue = ret.returnValue();
+            retValue = ret.getValue();
         }
         environment = current_scope;
         return retValue;

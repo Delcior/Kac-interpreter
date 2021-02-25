@@ -39,7 +39,10 @@ public class Kac {
     }
 
     private static void run(String source) {
-        Lexer lexer = new Lexer(source);
+        //preprocessing special '#' directives(such as import)
+        Importer importer = new Importer(source);
+        //tokenizing source code
+        Lexer lexer = new Lexer(importer.getSource());
         List<Token> tokens = lexer.scanTokens();
 
         if(hadError){

@@ -68,9 +68,8 @@ public class Parser {
     }
 
     private Stmt statement(){
-        if (match(TokenType.PRINT)) {
+        if (match(TokenType.PRINT))
             return printStatement();
-        }
 
         if(match(TokenType.LEFT_BRACE))
             return scopeStatement();
