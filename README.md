@@ -1,4 +1,4 @@
 # Kac-interpreter
-Interpreter for my own language 'Kac'
+Interpreter for language 'Kac'
 
 syntax documentation soon...
