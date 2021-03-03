@@ -6,7 +6,7 @@ enum TokenType{
     //keywords
     IF, ELSE, WHILE, AND, OR, FOR,
     TRUE, FALSE, RETURN, PRINT,
-    SUPER, THIS, VAR, FUN,
+    SUPER, THIS, VAR, FUN, CLASS,
 
     //literal
     STRING, NUMBER, NULL, USER_DEFINED,

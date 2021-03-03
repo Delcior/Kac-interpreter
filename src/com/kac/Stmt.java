@@ -12,6 +12,7 @@ abstract class Stmt {
 		T visitWhileStmt(While stmt);
 		T visitForStmt(For stmt);
 		T visitFunctionDeclarationStmt(FunctionDeclaration stmt);
+		T visitClassDeclarationStmt(ClassDeclaration stmt);
 		T visitReturnStmt(Return stmt);
 	}
     static class Expression extends Stmt{
@@ -109,6 +110,17 @@ abstract class Stmt {
 			this.body = body;
 		}
 		<T> T accept(Visitor<T> visitor){return visitor.visitFunctionDeclarationStmt(this);}
+	}
+	static class ClassDeclaration extends Stmt{
+		final Token name;
+		final List<Stmt> classData;
+
+		ClassDeclaration(Token name, List<Stmt> classData){
+			this.name = name;
+			this.classData = classData;
+		}
+
+		<T> T accept(Visitor<T> visitor){return visitor.visitClassDeclarationStmt(this);}
 	}
 	static class Return extends Stmt{
 		final Expr value;

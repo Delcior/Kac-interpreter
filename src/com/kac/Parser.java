@@ -27,17 +27,32 @@ public class Parser {
     private Stmt declaration(){
         //todo: try catch with synchronize()
         try {
-            if(match(TokenType.VAR)) {
+            if(match(TokenType.CLASS))
+                return classDeclaration();
+
+            if(match(TokenType.VAR))
                 return varDeclaration();
-            }
-            if(match(TokenType.FUN)){
+
+            if(match(TokenType.FUN))
                 return funDeclaration();
-            }
+
             return statement();
         }catch(ParserError e){
             synchronize();
             return null;
         }
+    }
+    private Stmt classDeclaration(){
+        Token className = consume(TokenType.USER_DEFINED, "Expected class name");
+        List<Stmt> classData = new LinkedList<>();
+
+        consume(TokenType.LEFT_BRACE, "Expected: { ");
+        while(!isAtEnd()){
+            if(match(TokenType.RIGHT_BRACE))
+                break;
+            classData.add(declaration());
+        }
+        return new Stmt.ClassDeclaration(className, classData);
     }
     private Stmt funDeclaration(){
         Token funName = consume(TokenType.USER_DEFINED, "Expected function name");

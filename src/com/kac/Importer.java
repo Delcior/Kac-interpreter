@@ -23,15 +23,15 @@ public class Importer {
     }
 
     private void scanImport(){
-        int index;
+        int begIndex;
         StringBuilder builder = new StringBuilder(source);
         StringBuilder path = new StringBuilder();
         String content = "";
-        //TODO: check if file is not included more than once
-        while((index=builder.indexOf("#import")) != -1){
-            int endOfInclude = builder.indexOf(";", index);
-            String libToBeImported = builder.substring(index+7, endOfInclude).trim();
-            builder.delete(index, endOfInclude+1);
+
+        while((begIndex=builder.indexOf("#import")) != -1){
+            int endIndex = builder.indexOf(";", begIndex);
+            String libToBeImported = builder.substring(begIndex+7, endIndex).trim();
+            builder.delete(begIndex, endIndex+1);
 
             if(!importedLibs.contains(libToBeImported)) {
                 path.append(System.getProperty("user.dir"));
@@ -44,10 +44,9 @@ public class Importer {
                 } catch (IOException aa) {
                     System.out.println(aa.getMessage());
                 }
-                builder.insert(index, content);
+                builder.insert(begIndex, content);
             }
         }
         source=builder.toString();
-        System.out.println(source);
     }
 }

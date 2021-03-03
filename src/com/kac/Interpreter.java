@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
-
+    //TODO: make Environment interface - needed for class,also does functions belong to scope?
     static class RuntimeError extends RuntimeException{
         final Token token;
 
@@ -23,12 +23,14 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         Object getValue(){return value;}
     }
 
-    private Environment environment;
+    private final HashMap<String, Class> classes;
     private HashMap<String, Stmt.FunctionDeclaration> functions;
+    private Environment environment;
 
     Interpreter(){
         environment = new Environment();
         functions = new HashMap<>();
+        classes = new HashMap<>();
     }
 
     public void interpret(List<Stmt> statements){
@@ -237,6 +239,27 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         //Callable fun = new Callable(stmt.arguments, stmt.body);
         functions.put(stmt.name.lexeme, stmt);
 
+        return null;
+    }
+
+    @Override
+    public Void visitClassDeclarationStmt(Stmt.ClassDeclaration stmt) {
+        Environment tmp_env = environment;
+        HashMap<String, Stmt.FunctionDeclaration> tmp_fun = functions;
+
+        environment = new Environment();
+        functions = new HashMap<>();
+
+        for(Stmt statement : stmt.classData)
+            statement.accept(this);
+
+        Class new_class = new Class();
+        new_class.publicFunctions = functions;
+        new_class.publicVariables = environment;
+        new_class.name = stmt.name.lexeme;
+
+        environment = tmp_env;
+        functions = tmp_fun;
         return null;
     }
 
