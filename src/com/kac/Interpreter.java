@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     //TODO: make Environment interface - needed for class,also does functions belong to scope?
+    //TODO: var declaration inside for statement makes variable global
     static class RuntimeError extends RuntimeException{
         final Token token;
 
@@ -224,13 +225,17 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Void visitForStmt(Stmt.For stmt) {
-        if(isTrue(stmt.initializer))
+        Environment tmp_env = environment;
+        if(isTrue(stmt.initializer)) {
+            environment = new Environment(tmp_env);
             execute(stmt.initializer);
+        }
 
         while(isTrue(evaluate(stmt.condition))){
             execute(stmt.body);
             execute(stmt.stateModifier);
         }
+        environment = tmp_env;
         return null;
     }
 
