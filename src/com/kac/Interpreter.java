@@ -297,10 +297,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
 
     @Override
     public Object visitFunctionCall(Expr.FunctionCall expr) {
+        //TODO: null fun check
+        //TODO: create Callable class
+        //todo: create object initialization function;
+        //function call
         Object retValue = null;
         Environment new_fun_scope = new Environment(environment.getGlobalEnv());
         Environment current_scope = environment;
         Stmt.FunctionDeclaration fun = functions.get(expr.name.lexeme);
+
         for(int i=0; i<expr.args.size(); i++)
             new_fun_scope.declare(fun.arguments.get(i), evaluate(expr.args.get(i)));
 
