@@ -2,9 +2,9 @@
 
 This is dynamically typed language where every statement ends with `;`. Scope is defined by `{` and `}`. 
 
-Logic operators:
-`and` - logical AND
-`or` - logical OR
+Logic operators:\
+`and` - logical AND\
+`or` - logical OR\
 `==` - comparison between two values
 
 Variable declaration looks like this:
@@ -20,8 +20,8 @@ var c=2.137;
 
 For loop declaration:
 
-**for**(_initializer_; _condition_; _state_modifier_){
-   //some code here
+**for**(_initializer_; _condition_; _state_modifier_){\
+   //some code here\
 }
   
 Example:
@@ -31,10 +31,10 @@ for(var i=0;i<10;i=i+1){
 }
 ```
 
-Analogically while loops declaration looks like this:
+Analogically while loop declaration looks like this:
 
-**while**(_condition_){
-  //some code here
+**while**(_condition_){\
+  //some code here\
 }
   
 Example:
