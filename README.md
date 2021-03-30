@@ -75,4 +75,39 @@ fun fibbonaci(n){
 	
 	return result;
 }
+
+print fibbonaci(10);
 ```
+
+Including other files:\
+`#import` pastes source code from imported file.
+
+`fib.ka` file:
+```
+fun fibbonaci(n){
+	if(n==0)
+		return 0;
+	if(n==1 or n==2)
+		return 1;
+	var result=0;
+	var a=1;
+	var b=1;
+
+	for(var i=2;i<n;i=i+1){
+		result=a+b;
+		a=b;
+		b=result;
+	}
+	
+	return result;
+}
+```
+`script.ka` file:
+```
+#import fib.ka;
+
+print fibbonaci(15);
+```
+
+References:
+https://craftinginterpreters.com/contents.html
